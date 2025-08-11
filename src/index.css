@@ -1,3 +1,15 @@
+@import 'bulma/css/bulma.min.css';
+
+/* Harmonisation des couleurs principales */
+:root {
+  --primary: #3273dc;
+  --link: #23d160;
+  --info: #209cee;
+  --success: #48c774;
+  --warning: #ffdd57;
+  --danger: #ff3860;
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -5,9 +17,31 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: #f4f7fa;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.box {
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(50, 115, 220, 0.06);
+}
+
+.navbar {
+  border-bottom: 2px solid #eaeaea;
+}
+
+.menu-list a.is-active, .menu-list a:focus, .menu-list a:hover {
+  background: #3273dc;
+  color: #fff !important;
+  border-radius: 5px;
+}
+
+.footer {
+  padding: 1.5rem 1rem;
+}
+
+/* Ajoutez ici vos styles personnalisés si besoin */
