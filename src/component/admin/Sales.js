@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import DataList from '../common/DataList';
 import { sales as salesData } from '../../data/mockSales';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 // Exemple de formulaire d'édition pour une vente (à adapter selon vos besoins)
 const EditSaleForm = ({ item, onClose, onSave }) => {
@@ -48,9 +50,27 @@ const Sales = () => {
     setSales(sales.map(s => s.id === updatedSale.id ? updatedSale : s));
   };
 
+  const exportPDF = () => {
+    const doc = new jsPDF();
+    doc.text('Historique des ventes', 14, 16);
+    doc.autoTable({
+      head: [columns],
+      body: sales.map(s => columns.map(col => s[col])),
+      startY: 22,
+      styles: { fontSize: 10 }
+    });
+    doc.save('ventes.pdf');
+  };
+
   return (
     <>
-      <h2 className="title has-text-white">Historique des ventes</h2>
+      <div className="is-flex is-justify-content-space-between is-align-items-center mb-4">
+        <h2 className="title has-text-white">Historique des ventes</h2>
+        <button className="button is-info" onClick={exportPDF}>
+          <span className="icon"><i className="fas fa-file-pdf"></i></span>
+          <span>Exporter PDF</span>
+        </button>
+      </div>
       <DataList
         columns={columns}
         data={sales}
