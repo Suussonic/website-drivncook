@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Modal from './Modal';
 
-const DataList = ({ columns, data, EditForm, onDelete }) => {
+const DataList = ({ columns, data, EditForm, onDelete, title }) => {
   const [search, setSearch] = useState('');
   const [sortCol, setSortCol] = useState(null);
   const [sortAsc, setSortAsc] = useState(true);
@@ -31,6 +31,7 @@ const DataList = ({ columns, data, EditForm, onDelete }) => {
 
   return (
     <div className="box" style={{ borderRadius: 18, background: '#23272f' }}>
+      {title && <h2 className="title has-text-white">{title}</h2>}
       <div className="field mb-4">
         <div className="control has-icons-left">
           <input
@@ -70,20 +71,22 @@ const DataList = ({ columns, data, EditForm, onDelete }) => {
           <tbody>
             {sorted.map((row, idx) => (
               <tr key={row.id || idx}>
-                <td>
+                <td style={{ minWidth: 70 }}>
                   <button
-                    className="button is-small is-info mr-2"
+                    className="button is-small mr-2"
+                    style={{ background: '#3ec1ef', border: 'none', marginRight: 8, borderRadius: 6, padding: 0, width: 36, height: 36, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
                     onClick={() => setEditItem(row)}
                   >
-                    <span className="icon is-small">
-                      <i className="fas fa-edit"></i>
+                    <span className="icon is-small" style={{ color: '#fff' }}>
+                      <i className="fas fa-pen"></i>
                     </span>
                   </button>
                   <button
-                    className="button is-small is-danger"
+                    className="button is-small"
+                    style={{ background: '#ff5e7e', border: 'none', borderRadius: 6, padding: 0, width: 36, height: 36, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
                     onClick={() => onDelete && onDelete(row)}
                   >
-                    <span className="icon is-small">
+                    <span className="icon is-small" style={{ color: '#fff' }}>
                       <i className="fas fa-trash"></i>
                     </span>
                   </button>
