@@ -4,7 +4,6 @@ import Footer from './Footer';
 
 const MainLayout = ({ children }) => (
   <div className="has-background-dark" style={{ minHeight: '100vh' }}>
-    <Navbar />
     <div
       className="is-flex is-justify-content-center"
       style={{ minHeight: 'calc(100vh - 52px)' }}
