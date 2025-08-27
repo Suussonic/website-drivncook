@@ -1,7 +1,29 @@
 
-import React from 'react';
+
+import React, { useEffect, useState } from 'react';
 
 const Fidelite = ({ user }) => {
+  const [points, setPoints] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    if (!user) return;
+    const fetchFidelity = async () => {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/fidelity/${user.id}`);
+        if (!response.ok) throw new Error('Erreur lors du chargement de la fidélité');
+        const data = await response.json();
+        setPoints(data.points || 0);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchFidelity();
+  }, [user]);
+
   if (!user) {
     return (
       <section className="section">
@@ -14,8 +36,9 @@ const Fidelite = ({ user }) => {
     );
   }
 
-  // Exemple de données fictives, à remplacer par un vrai fetch utilisateur
-  const points = user.fidelityPoints || 42;
+  if (loading) return <div className="has-text-white">Chargement de la fidélité...</div>;
+  if (error) return <div className="has-text-danger">{error}</div>;
+
   const avantage = points >= 50 ? '15% de réduction sur la prochaine commande' : '10% de réduction sur la prochaine commande';
 
   return (

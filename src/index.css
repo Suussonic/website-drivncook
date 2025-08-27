@@ -1,6 +1,6 @@
 @import 'bulma/css/bulma.min.css';
 
-/* Harmonisation des couleurs principales */
+ 
 :root {
   --primary: #3273dc;
   --link: #23d160;
@@ -44,4 +44,4 @@ code {
   padding: 1.5rem 1rem;
 }
 
-/* Ajoutez ici vos styles personnalisés si besoin */
+ 

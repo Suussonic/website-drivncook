@@ -1,25 +1,28 @@
-
 import React, { useEffect, useState } from 'react';
-
-const getMenus = () => {
-  // Simule un fetch localStorage ou API
-  const local = localStorage.getItem('menus');
-  if (local) return JSON.parse(local);
-  return [
-    { id: 1, name: 'Burger du Chef', price: 12, desc: 'Pain artisanal, steak frais, cheddar affiné, sauce maison.' },
-    { id: 2, name: 'Wrap Poulet Fermier', price: 10, desc: 'Poulet fermier, crudités, sauce yaourt, galette moelleuse.' },
-    { id: 3, name: 'Salade Fraîcheur', price: 9, desc: 'Mélange de jeunes pousses, légumes croquants, vinaigrette maison.' },
-    { id: 4, name: 'Frites maison', price: 4, desc: 'Pommes de terre françaises, double cuisson, sel de Guérande.' },
-    { id: 5, name: 'Boissons locales', price: 3, desc: 'Sodas et jus artisanaux d’Île-de-France.' },
-  ];
-};
 
 const Menus = () => {
   const [menus, setMenus] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    setMenus(getMenus());
+    const fetchMenus = async () => {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/menus`);
+        if (!response.ok) throw new Error('Erreur lors du chargement des menus');
+        const data = await response.json();
+        setMenus(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchMenus();
   }, []);
+
+  if (loading) return <div className="has-text-white">Chargement des menus...</div>;
+  if (error) return <div className="has-text-danger">{error}</div>;
 
   return (
     <section className="section" style={{ background: '#181a20', minHeight: '100vh' }}>
@@ -39,6 +42,8 @@ const Menus = () => {
       </div>
     </section>
   );
+
+
 };
 
 export default Menus;

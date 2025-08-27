@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import DataList from '../common/DataList';
-import { warehouses as warehousesData } from '../../data/mockWarehouses';
 
 const EditWarehouseForm = ({ item, onClose, onSave }) => {
   const [form, setForm] = useState({ ...item });
@@ -34,18 +33,54 @@ const EditWarehouseForm = ({ item, onClose, onSave }) => {
   );
 };
 
-const columns = ['id', 'name', 'stock'];
+const columns = ['_id', 'name', 'stock'];
 
 const Warehouses = () => {
-  const [warehouses, setWarehouses] = useState(warehousesData);
+  const [warehouses, setWarehouses] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const handleDelete = (warehouse) => {
-    setWarehouses(warehouses.filter(w => w.id !== warehouse.id));
+  useEffect(() => {
+    const fetchWarehouses = async () => {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/warehouses`);
+        if (!response.ok) throw new Error('Erreur lors du chargement des entrepôts');
+        const data = await response.json();
+        setWarehouses(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchWarehouses();
+  }, []);
+
+  const handleDelete = async (warehouse) => {
+    try {
+      await fetch(`${process.env.REACT_APP_API_URL}/warehouses/${warehouse._id}`, { method: 'DELETE' });
+      setWarehouses(warehouses.filter(w => w._id !== warehouse._id));
+    } catch (err) {
+      setError('Erreur lors de la suppression');
+    }
   };
 
-  const handleSave = (updatedWarehouse) => {
-    setWarehouses(warehouses.map(w => w.id === updatedWarehouse.id ? updatedWarehouse : w));
+  const handleSave = async (updatedWarehouse) => {
+    try {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/warehouses/${updatedWarehouse._id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedWarehouse)
+      });
+      if (!res.ok) throw new Error();
+      setWarehouses(warehouses.map(w => w._id === updatedWarehouse._id ? updatedWarehouse : w));
+    } catch (err) {
+      setError('Erreur lors de la modification');
+    }
   };
+
+  if (loading) return <div className="has-text-white">Chargement des entrepôts...</div>;
+  if (error) return <div className="has-text-danger">{error}</div>;
 
   return (
     <>

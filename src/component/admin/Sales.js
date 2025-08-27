@@ -1,10 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import DataList from '../common/DataList';
-import { sales as salesData } from '../../data/mockSales';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
-
-// Exemple de formulaire d'édition pour une vente (à adapter selon vos besoins)
 const EditSaleForm = ({ item, onClose, onSave }) => {
   const [form, setForm] = useState({ ...item });
 
@@ -37,17 +34,50 @@ const EditSaleForm = ({ item, onClose, onSave }) => {
   );
 };
 
-const columns = ['id', 'franchisee', 'amount', 'date'];
+const columns = ['_id', 'franchisee', 'amount', 'date'];
 
 const Sales = () => {
-  const [sales, setSales] = useState(salesData);
+  const [sales, setSales] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const handleDelete = (sale) => {
-    setSales(sales.filter(s => s.id !== sale.id));
+  useEffect(() => {
+    const fetchSales = async () => {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/sales`);
+        if (!response.ok) throw new Error('Erreur lors du chargement des ventes');
+        const data = await response.json();
+        setSales(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchSales();
+  }, []);
+
+  const handleDelete = async (sale) => {
+    try {
+      await fetch(`${process.env.REACT_APP_API_URL}/sales/${sale._id}`, { method: 'DELETE' });
+      setSales(sales.filter(s => s._id !== sale._id));
+    } catch (err) {
+      setError('Erreur lors de la suppression');
+    }
   };
 
-  const handleSave = (updatedSale) => {
-    setSales(sales.map(s => s.id === updatedSale.id ? updatedSale : s));
+  const handleSave = async (updatedSale) => {
+    try {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/sales/${updatedSale._id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedSale)
+      });
+      if (!res.ok) throw new Error();
+      setSales(sales.map(s => s._id === updatedSale._id ? updatedSale : s));
+    } catch (err) {
+      setError('Erreur lors de la modification');
+    }
   };
 
   const exportPDF = () => {
@@ -61,6 +91,9 @@ const Sales = () => {
     });
     doc.save('ventes.pdf');
   };
+
+  if (loading) return <div className="has-text-white">Chargement des ventes...</div>;
+  if (error) return <div className="has-text-danger">{error}</div>;
 
   return (
     <>

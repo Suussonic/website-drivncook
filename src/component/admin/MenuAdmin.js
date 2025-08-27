@@ -1,31 +1,61 @@
-import React, { useState } from 'react';
-
-const initialMenus = [
-  { id: 1, name: 'Burger du Chef', price: 12 },
-  { id: 2, name: 'Wrap Poulet Fermier', price: 10 },
-  { id: 3, name: 'Salade Fraîcheur', price: 9 },
-  { id: 4, name: 'Frites maison', price: 4 },
-  { id: 5, name: 'Boissons locales', price: 3 },
-];
+import React, { useEffect, useState } from 'react';
 
 function MenuAdmin() {
-  const [menus, setMenus] = useState(initialMenus);
-  const [newMenu, setNewMenu] = useState({ name: '', price: '' });
+  const [menus, setMenus] = useState([]);
+  const [newMenu, setNewMenu] = useState({ name: '', price: '', desc: '' });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchMenus = async () => {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/menus`);
+        if (!response.ok) throw new Error('Erreur lors du chargement des menus');
+        const data = await response.json();
+        setMenus(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchMenus();
+  }, []);
 
   const handleChange = e => {
     setNewMenu({ ...newMenu, [e.target.name]: e.target.value });
   };
 
-  const handleAdd = e => {
+  const handleAdd = async e => {
     e.preventDefault();
-    if (!newMenu.name || !newMenu.price) return;
-    setMenus([...menus, { ...newMenu, id: Date.now(), price: parseFloat(newMenu.price) }]);
-    setNewMenu({ name: '', price: '' });
+    if (!newMenu.name || !newMenu.price || !newMenu.desc) return;
+    try {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/menus`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: newMenu.name, price: parseFloat(newMenu.price), desc: newMenu.desc })
+      });
+      if (!response.ok) throw new Error('Erreur lors de l\'ajout du menu');
+      const added = await response.json();
+      setMenus([...menus, added]);
+      setNewMenu({ name: '', price: '', desc: '' });
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
-  const handleDelete = id => {
-    setMenus(menus.filter(m => m.id !== id));
+  const handleDelete = async id => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/menus/${id}`, { method: 'DELETE' });
+      if (!response.ok) throw new Error('Erreur lors de la suppression');
+      setMenus(menus.filter(m => m._id !== id && m.id !== id));
+    } catch (err) {
+      setError(err.message);
+    }
   };
+
+  if (loading) return <div className="has-text-white">Chargement des menus...</div>;
+  if (error) return <div className="has-text-danger">{error}</div>;
 
   return (
     <section className="section">
@@ -38,6 +68,9 @@ function MenuAdmin() {
             </div>
             <div className="control">
               <input className="input" name="price" type="number" min="0" step="0.01" placeholder="Prix (€)" value={newMenu.price} onChange={handleChange} />
+            </div>
+            <div className="control is-expanded">
+              <input className="input" name="desc" placeholder="Description" value={newMenu.desc} onChange={handleChange} />
             </div>
             <div className="control">
               <button className="button is-primary" type="submit">Ajouter</button>
@@ -54,10 +87,10 @@ function MenuAdmin() {
           </thead>
           <tbody>
             {menus.map(menu => (
-              <tr key={menu.id}>
+              <tr key={menu._id || menu.id}>
                 <td>{menu.name}</td>
                 <td>{menu.price.toFixed(2)}</td>
-                <td><button className="button is-danger is-small" onClick={() => handleDelete(menu.id)}>Supprimer</button></td>
+                <td><button className="button is-danger is-small" onClick={() => handleDelete(menu._id || menu.id)}>Supprimer</button></td>
               </tr>
             ))}
           </tbody>

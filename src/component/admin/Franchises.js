@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import DataList from '../common/DataList';
-import { franchises as franchisesData } from '../../data/mockFranchises';
 
 const EditFranchiseForm = ({ item, onClose, onSave }) => {
   const [form, setForm] = useState({ ...item });
@@ -66,22 +65,70 @@ const AddFranchiseForm = ({ onAdd }) => {
   );
 };
 
-const columns = ['id', 'name', 'email'];
+
+const columns = ['_id', 'name', 'email'];
 
 const Franchises = () => {
-  const [franchises, setFranchises] = useState(franchisesData);
+  const [franchises, setFranchises] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const handleDelete = (franchise) => {
-    setFranchises(franchises.filter(f => f.id !== franchise.id));
+  useEffect(() => {
+    const fetchFranchises = async () => {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/franchises`);
+        if (!response.ok) throw new Error('Erreur lors du chargement des franchises');
+        const data = await response.json();
+        setFranchises(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchFranchises();
+  }, []);
+
+  const handleDelete = async (franchise) => {
+    try {
+      await fetch(`${process.env.REACT_APP_API_URL}/franchises/${franchise._id}`, { method: 'DELETE' });
+      setFranchises(franchises.filter(f => f._id !== franchise._id));
+    } catch (err) {
+      setError('Erreur lors de la suppression');
+    }
   };
 
-  const handleSave = (updatedFranchise) => {
-    setFranchises(franchises.map(f => f.id === updatedFranchise.id ? updatedFranchise : f));
+  const handleSave = async (updatedFranchise) => {
+    try {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/franchises/${updatedFranchise._id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedFranchise)
+      });
+      if (!res.ok) throw new Error();
+      setFranchises(franchises.map(f => f._id === updatedFranchise._id ? updatedFranchise : f));
+    } catch (err) {
+      setError('Erreur lors de la modification');
+    }
   };
 
-  const handleAdd = (newFranchise) => {
-    setFranchises([...franchises, newFranchise]);
+  const handleAdd = async (newFranchise) => {
+    try {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/franchises`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newFranchise)
+      });
+      if (!res.ok) throw new Error();
+      const added = await res.json();
+      setFranchises([...franchises, added]);
+    } catch (err) {
+      setError('Erreur lors de l\'ajout');
+    }
   };
+
+  if (loading) return <div className="has-text-white">Chargement des franchises...</div>;
+  if (error) return <div className="has-text-danger">{error}</div>;
 
   return (
     <>

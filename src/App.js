@@ -38,7 +38,7 @@ function App() {
     { type: 'is-info', message: "Bienvenue sur la plateforme Driv'n Cook !" }
   ]);
   const [user, setUser] = useState(null);
-  const isAdmin = false; // à remplacer par une vraie gestion d’authentification
+  const isAdmin = false;
 
   const handleCloseNotif = idx => {
     setNotifications(notifications.filter((_, i) => i !== idx));
@@ -54,7 +54,7 @@ function App() {
         <MainLayout isAdmin={isAdmin}>
           <GlobalNotifications notifications={notifications} onClose={handleCloseNotif} />
           <Routes>
-            {/* Public routes */}
+            
             <Route path="/" element={<PublicHome />} />
             <Route path="/home" element={<PublicHome />} />
             <Route path="/menus" element={<Menus />} />
@@ -64,7 +64,7 @@ function App() {
             <Route path="/clients" element={<Clients />} />
             <Route path="/interconnexion" element={<Interconnexion />} />
             <Route path="/login" element={<Login onLogin={handleLogin} />} />
-            {/* Franchisé secured routes */}
+            
             <Route path="/my-orders" element={user ? <MyOrders user={user} /> : <Login onLogin={handleLogin} />} />
             <Route path="/my-sales" element={user ? <MySales user={user} /> : <Login onLogin={handleLogin} />} />
             <Route path="/my-trucks" element={user ? <MyTrucks user={user} /> : <Login onLogin={handleLogin} />} />
@@ -72,7 +72,7 @@ function App() {
             <Route path="/versements" element={user ? <Versements user={user} sales={[]} /> : <Login onLogin={handleLogin} />} />
             <Route path="/franchise-dashboard" element={user ? <FranchiseDashboard user={user} sales={[]} trucks={[]} orders={[]} /> : <Login onLogin={handleLogin} />} />
             <Route path="/warehouses" element={user ? <WarehousesFront /> : <Login onLogin={handleLogin} />} />
-            {/* Backoffice admin routes (conservés) */}
+            
             <Route path="/menu-admin" element={<MenuAdmin />} />
             <Route path="/backoffice" element={<BackOfficeHome />} />
             <Route path="/franchises" element={<Franchises />} />
