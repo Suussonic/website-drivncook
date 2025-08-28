@@ -82,9 +82,25 @@ const Warehouses = () => {
   if (loading) return <div className="has-text-white">Chargement des entrepôts...</div>;
   if (error) return <div className="has-text-danger">{error}</div>;
 
+  // Alerte 80/20
+  const alerts = warehouses.map(w => {
+    // Stock peut être un nombre ou un objet, on gère les deux cas
+    const stockValue = typeof w.stock === 'number' ? w.stock : (w.stock && w.stock.percent ? w.stock.percent : null);
+    if (stockValue !== null && stockValue !== undefined) {
+      if (stockValue < 80) {
+        return <div key={w._id} className="has-text-danger">Alerte: Le stock de l'entrepôt "{w.name}" est sous 80% ({stockValue}%)</div>;
+      }
+      if (stockValue > 20) {
+        return <div key={w._id} className="has-text-warning">Alerte: Le stock de l'entrepôt "{w.name}" dépasse 20% hors entrepôt principal ({stockValue}%)</div>;
+      }
+    }
+    return null;
+  });
+
   return (
     <>
       <h2 className="title has-text-white">Gestion des entrepôts</h2>
+      {alerts}
       <DataList
         columns={columns}
         data={warehouses}

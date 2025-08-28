@@ -12,9 +12,7 @@ const Sidebar = ({ isAdmin }) => (
           <li><Link to="/trucks">Camions</Link></li>
           <li><Link to="/warehouses">Entrepôts</Link></li>
           <li><Link to="/orders">Achats</Link></li>
-          <li><Link to="/sales">Ventes</Link></li>
           <li><Link to="/reports">Rapports</Link></li>
-          <li><Link to="/alerts">Alertes</Link></li>
         </>
       ) : (
         <>

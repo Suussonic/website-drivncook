@@ -21,9 +21,9 @@ const PublicHome = () => (
         </div>
         <div className="column is-half">
           <div className="box" style={{ background: '#23272f', borderRadius: 12, minHeight: 220 }}>
-            <h2 className="subtitle has-text-white">Réservez ou Commandez</h2>
-            <p className="has-text-white">Réservez votre plat à l'avance ou privatisez un food truck pour vos événements privés ou professionnels.</p>
-            <a href="/reservation" className="button is-info mt-3">Réserver maintenant</a>
+            <h2 className="subtitle has-text-white">Nos menus</h2>
+            <p className="has-text-white">Découvrez tous nos menus gourmands, faits maison et adaptés à tous les goûts.</p>
+            <a href="/menus" className="button is-primary mt-3">Voir les menus</a>
           </div>
         </div>
         <div className="column is-half">
@@ -36,8 +36,8 @@ const PublicHome = () => (
         <div className="column is-half">
           <div className="box" style={{ background: '#23272f', borderRadius: 12, minHeight: 220 }}>
             <h2 className="subtitle has-text-white">Nos Food Trucks</h2>
-            <p className="has-text-white">Retrouvez nos camions dans toute l'Ile-de-France ! Consultez les emplacements, menus et horaires.</p>
-            <a href="/menus" className="button is-primary mt-3">Voir les menus</a>
+            <p className="has-text-white">Retrouvez tous nos food trucks et franchisés partout en Ile-de-France. Consultez les emplacements et horaires pour nous retrouver près de chez vous.</p>
+            <a href="/emplacements" className="button is-info mt-3">Voir les emplacements</a>
           </div>
         </div>
       </div>
