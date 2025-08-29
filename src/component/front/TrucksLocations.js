@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const TrucksLocations = () => {
+  const { t } = useTranslation();
   const [trucks, setTrucks] = useState([]);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
@@ -24,20 +26,20 @@ const TrucksLocations = () => {
   return (
     <section className="section" style={{ background: '#181a20', minHeight: '100vh' }}>
       <div className="container" style={{ maxWidth: 900, margin: '2rem auto' }}>
-        <h2 className="title has-text-white">Emplacements des Food Trucks</h2>
+        <h2 className="title has-text-white">{t('Emplacements des Food Trucks')}</h2>
         <input
           className="input mb-4"
           style={{ maxWidth: 400 }}
-          placeholder="Rechercher par ville, adresse ou plaque..."
+          placeholder={t('Rechercher par ville, adresse ou plaque...')}
           value={search}
           onChange={e => setSearch(e.target.value)}
         />
         {loading ? (
-          <div className="has-text-white">Chargement...</div>
+          <div className="has-text-white">{t('Chargement...')}</div>
         ) : (
           <div className="columns is-multiline">
             {filtered.length === 0 && (
-              <div className="has-text-white ml-3">Aucun food truck trouvé.</div>
+              <div className="has-text-white ml-3">{t('Aucun food truck trouvé.')}</div>
             )}
             {filtered.map(truck => (
               <div className="column is-half" key={truck._id}>
@@ -47,12 +49,12 @@ const TrucksLocations = () => {
                   onClick={() => navigate(`/trucks/${truck._id}`)}
                   onKeyDown={e => { if (e.key === 'Enter') navigate(`/trucks/${truck._id}`); }}
                   tabIndex={0}
-                  aria-label={`Voir le food truck ${truck.plate}`}
+                  aria-label={t('Voir le food truck {{plate}}', { plate: truck.plate })}
                 >
                   <h3 className="subtitle has-text-white">{truck.plate} <span className="tag is-info is-light ml-2">{truck.city || '-'}</span></h3>
-                  <p className="has-text-white"><b>Adresse :</b> {truck.address || '-'}</p>
-                  <p className="has-text-white"><b>Horaires :</b> {truck.schedule || '-'}</p>
-                  <p className="has-text-white"><b>Status :</b> {truck.status || '-'}</p>
+                  <p className="has-text-white"><b>{t('Adresse')} :</b> {truck.address || '-'}</p>
+                  <p className="has-text-white"><b>{t('Horaires')} :</b> {truck.schedule || '-'}</p>
+                  <p className="has-text-white"><b>{t('Status')} :</b> {truck.status || '-'}</p>
                 </div>
               </div>
             ))}

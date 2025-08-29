@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 
 const Menus = () => {
@@ -6,6 +8,7 @@ const Menus = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [search, setSearch] = useState('');
+    const { t } = useTranslation();
 
   useEffect(() => {
     const fetchMenus = async () => {
@@ -31,22 +34,22 @@ const Menus = () => {
     );
   });
 
-  if (loading) return <div className="has-text-white">Chargement des menus...</div>;
-  if (error) return <div className="has-text-danger">{error}</div>;
+    if (loading) return <div className="has-text-white">{t('Chargement des menus...')}</div>;
+    if (error) return <div className="has-text-danger">{t(error)}</div>;
 
   return (
     <section className="section" style={{ background: '#181a20', minHeight: '100vh' }}>
       <div className="container" style={{ maxWidth: 900, margin: '2rem auto' }}>
         <h2 className="title has-text-white">Nos Menus</h2>
         <p className="has-text-white mt-3" style={{ fontSize: '1.15rem', marginBottom: 24 }}>
-          Tous nos plats sont préparés à partir de produits frais et locaux dans nos cuisines d'entrepôt.
+            {t("Tous nos plats sont préparés à partir de produits frais et locaux dans nos cuisines d'entrepôt.")}
         </p>
         <div style={{ marginBottom: 24, display: 'flex', justifyContent: 'center' }}>
           <input
             className="input"
             style={{ maxWidth: 350 }}
             type="text"
-            placeholder="Rechercher un menu..."
+              placeholder={t('Rechercher un menu...')}
             value={search}
             onChange={e => setSearch(e.target.value)}
           />

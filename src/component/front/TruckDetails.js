@@ -1,11 +1,20 @@
+
+
+
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate } from 'react-router-dom';
 
-
-// On suppose que l'utilisateur est stocké dans le localStorage (comme après login)
-import Navbar from '../layout/Navbar';
-
 const TruckDetails = () => {
+  const { t } = useTranslation();
+  // Récupère l'utilisateur connecté (null si non connecté)
+  const user = React.useMemo(() => {
+    try {
+      return JSON.parse(localStorage.getItem('user'));
+    } catch {
+      return null;
+    }
+  }, []);
   const { id } = useParams();
   const [truck, setTruck] = useState(null);
   const [menus, setMenus] = useState([]);
@@ -15,13 +24,43 @@ const TruckDetails = () => {
   const [quantities, setQuantities] = useState({});
   const [orderSuccess, setOrderSuccess] = useState(false);
   const [orderError, setOrderError] = useState(null);
+
+
   const navigate = useNavigate();
 
-  // Récupère l'utilisateur connecté (null si non connecté)
-  let user = null;
-  try {
-    user = JSON.parse(localStorage.getItem('user'));
-  } catch {}
+
+  // Calcul du total et réduction (affichage uniquement)
+  const total = Object.entries(quantities).reduce((sum, [menuId, qty]) => {
+    const menu = menus.find(m => m.id === menuId || m._id === menuId);
+    return sum + (menu ? menu.price * (parseInt(qty) || 0) : 0);
+  }, 0);
+  // Remise dynamique selon fidélité : 1% par achat, max 30%
+  const [orderCount, setOrderCount] = useState(0);
+  const [remise, setRemise] = useState(0);
+  useEffect(() => {
+    if (!user || !user.email) return;
+    fetch(`${process.env.REACT_APP_API_URL}/orders`)
+      .then(res => {
+        if (!res.ok) throw new Error('Erreur lors du chargement des achats');
+        return res.json();
+      })
+      .then(data => {
+        const filtered = data.filter(order => {
+          const userObj = order.userId;
+          if (!userObj || !userObj.email || !user.email) return false;
+          return userObj.email === user.email;
+        });
+        setOrderCount(filtered.length);
+        setRemise(Math.min(filtered.length, 30));
+      })
+      .catch(() => {
+        setOrderCount(0);
+        setRemise(0);
+      });
+  }, [user]);
+  const totalReduit = total * (1 - remise / 100);
+
+
 
   useEffect(() => {
     setLoading(true);
@@ -73,7 +112,10 @@ const TruckDetails = () => {
       truckCity: truck.city,
       menus: items,
       date: new Date().toISOString(),
-      status: 'en attente'
+      status: 'en attente',
+      total,
+      remise,
+      totalReduit
     };
     try {
       const res = await fetch(`${process.env.REACT_APP_API_URL}/orders`, {
@@ -92,46 +134,41 @@ const TruckDetails = () => {
     }
   };
 
-  if (loading) return <div className="has-text-white">Chargement...</div>;
+  if (loading) return <div className="has-text-white">{t('Chargement...')}</div>;
   if (error) return <div className="has-text-danger">{error}</div>;
-  if (!truck) return <div className="has-text-danger">Food truck introuvable.</div>;
+  if (!truck) return <div className="has-text-danger">{t('Food truck introuvable.')}</div>;
 
   return (
     <>
-      <Navbar
-        isLogged={!!user}
-        user={user}
-        forceBackOffice={false}
-        onLogout={() => { localStorage.removeItem('user'); window.location.reload(); }}
-      />
+
       <section className="section" style={{ background: '#181a20', minHeight: '100vh' }}>
         <div className="container" style={{ maxWidth: 900, margin: '2rem auto' }}>
-          <button className="button is-light mb-4" onClick={() => navigate(-1)}>&larr; Retour</button>
+          <button className="button is-light mb-4" onClick={() => navigate(-1)}>&larr; {t('Retour')}</button>
           <div className="columns">
             <div className="column is-5">
               <div className="box" style={{ background: '#23272f', borderRadius: 12 }}>
                 <h2 className="title has-text-white">{truck.plate} <span className="tag is-info is-light ml-2">{truck.city || '-'}</span></h2>
-                <p className="has-text-white"><b>Adresse :</b> {truck.address || '-'}</p>
-                <p className="has-text-white"><b>Horaires :</b> {truck.schedule || '-'}</p>
-                <p className="has-text-white"><b>Status :</b> {truck.status || '-'}</p>
-                <p className="has-text-white"><b>Description :</b> {truck.desc || '-'}</p>
+                <p className="has-text-white"><b>{t('Address')} :</b> {truck.address || '-'}</p>
+                <p className="has-text-white"><b>{t('Hours')} :</b> {truck.schedule || '-'}</p>
+                <p className="has-text-white"><b>{t('Status')} :</b> {t(truck.status) || '-'}</p>
+                <p className="has-text-white"><b>{t('Description')} :</b> {truck.desc || '-'}</p>
               </div>
             </div>
             <div className="column is-7">
               <div className="box" style={{ background: '#23272f', borderRadius: 12 }}>
-                <h3 className="subtitle has-text-white">Menus disponibles</h3>
+                <h3 className="subtitle has-text-white">{t('Available menus')}</h3>
                 <div style={{ marginBottom: 18, display: 'flex', justifyContent: 'flex-end' }}>
                   <input
                     className="input"
                     style={{ maxWidth: 300 }}
                     type="text"
-                    placeholder="Rechercher un menu..."
+                    placeholder={t('Search a menu...')}
                     value={search}
                     onChange={e => setSearch(e.target.value)}
                   />
                 </div>
                 <form onSubmit={handleOrder}>
-                  {menus.length === 0 && <div className="has-text-white">Aucun menu disponible.</div>}
+                  {menus.length === 0 && <div className="has-text-white">{t('No menu found.')}</div>}
                   {menus
                     .filter(menu => {
                       const s = search.toLowerCase();
@@ -152,16 +189,22 @@ const TruckDetails = () => {
                             style={{ maxWidth: 80, background: '#181a20', color: '#fff', border: 'none' }}
                             value={quantities[menu.id || menu._id] || ''}
                             onChange={e => handleQtyChange(menu.id || menu._id, e.target.value)}
-                            placeholder="Qté"
+                            placeholder={t('Qty')}
                             disabled={!user}
                           />
                         </div>
                       </div>
                     ))}
                   {orderError && <div className="notification is-danger mt-3">{orderError}</div>}
-                  {orderSuccess && <div className="notification is-success mt-3">Réservation enregistrée !</div>}
-                  <button className="button is-success mt-4" type="submit" disabled={!user}>Réserver</button>
-                  {!user && <div className="has-text-warning mt-2">Connectez-vous pour réserver des menus.</div>}
+                  {orderSuccess && <div className="notification is-success mt-3">{t('Réservation enregistrée !')}</div>}
+                  <button className="button is-success mt-4" type="submit" disabled={!user}>{t('Book')}</button>
+                  <div style={{ color: '#fff', fontWeight: 600, marginTop: 12 }}>
+                    {t('Total')} : {total.toFixed(2)} €
+                    <span style={{ color: '#3ec1ef', marginLeft: 8 }}>
+                      ({t('With a discount of')} {remise}% : {totalReduit.toFixed(2)} €)
+                    </span>
+                  </div>
+                  {!user && <div className="has-text-warning mt-2">{t('Connectez-vous pour réserver des menus.')}</div>}
                 </form>
               </div>
             </div>

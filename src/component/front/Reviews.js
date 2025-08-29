@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const Reviews = () => {
+  const { t } = useTranslation();
   const [reviews, setReviews] = useState([]);
   const [form, setForm] = useState({ user: '', comment: '', rating: 5 });
   const [message, setMessage] = useState(null);
@@ -37,14 +39,14 @@ const Reviews = () => {
   return (
     <section className="section" style={{ background: '#181a20' }}>
       <div className="container" style={{ maxWidth: 600, margin: '2rem auto' }}>
-        <h2 className="title has-text-white">Avis clients</h2>
+        <h2 className="title has-text-white">{t('Avis clients')}</h2>
         <form onSubmit={handleSubmit} className="mb-4">
           <div className="field is-grouped">
             <div className="control is-expanded">
-              <input className="input" name="user" placeholder="Votre nom" value={form.user} onChange={handleChange} required />
+              <input className="input" name="user" placeholder={t('Votre nom')} value={form.user} onChange={handleChange} required />
             </div>
             <div className="control is-expanded">
-              <input className="input" name="comment" placeholder="Votre avis" value={form.comment} onChange={handleChange} required />
+              <input className="input" name="comment" placeholder={t('Votre avis')} value={form.comment} onChange={handleChange} required />
             </div>
             <div className="control">
               <select className="input" name="rating" value={form.rating} onChange={handleChange} required>
@@ -52,11 +54,11 @@ const Reviews = () => {
               </select>
             </div>
             <div className="control">
-              <button className="button is-primary" type="submit">Envoyer</button>
+              <button className="button is-primary" type="submit">{t('Envoyer')}</button>
             </div>
           </div>
         </form>
-        {message && <div className={message.includes('Merci') ? 'has-text-success' : 'has-text-danger'}>{message}</div>}
+        {message && <div className={message.includes(t('Merci')) ? 'has-text-success' : 'has-text-danger'}>{message}</div>}
         <div>
           {reviews.map((r, i) => (
             <div key={i} className="box" style={{ background: '#23272f', color: '#fff', marginBottom: 8 }}>

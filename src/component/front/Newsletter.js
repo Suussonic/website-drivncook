@@ -37,7 +37,7 @@ const Newsletter = () => {
             <option value="en">EN</option>
           </select>
         </div>
-        <h2 className="title has-text-white">{t('Newsletter')}</h2>
+  <h2 className="title has-text-white">{t('Newsletter')}</h2>
         <form onSubmit={handleSubmit} className="mb-4">
           <div className="field is-grouped">
             <div className="control is-expanded">

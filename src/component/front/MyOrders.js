@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 
 const MyOrders = ({ user }) => {
+  const { t } = useTranslation();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -48,13 +50,13 @@ const MyOrders = ({ user }) => {
   return (
     <section className="section">
       <div className="box" style={{ maxWidth: 1200, margin: '2rem auto', background: '#23272f', borderRadius: 18 }}>
-        <h2 className="title has-text-white">Mes achats</h2>
+  <h2 className="title has-text-white">{t('Mes achats')}</h2>
         <div style={{ marginBottom: 20, display: 'flex', justifyContent: 'flex-end' }}>
           <input
             className="input"
             style={{ maxWidth: 300 }}
             type="text"
-            placeholder="Rechercher (food truck, menu, ville...)"
+            placeholder={t('Rechercher (food truck, menu, ville...)')}
             value={search}
             onChange={e => setSearch(e.target.value)}
           />
@@ -62,12 +64,12 @@ const MyOrders = ({ user }) => {
         <table className="table is-fullwidth is-hoverable" style={{ background: '#23272f', color: '#fff', borderRadius: 12 }}>
           <thead>
             <tr>
-              <th>Food Truck</th>
-              <th>Adresse food truck</th>
-              <th>Menus & Quantités</th>
-              <th>Prix total</th>
-              <th>Date</th>
-              <th>Status</th>
+              <th>{t('Food Truck')}</th>
+              <th>{t('Adresse food truck')}</th>
+              <th>{t('Menus & Quantités')}</th>
+              <th>{t('Prix total')}</th>
+              <th>{t('Date')}</th>
+              <th>{t('Statut')}</th>
             </tr>
           </thead>
           <tbody>
@@ -82,21 +84,21 @@ const MyOrders = ({ user }) => {
                     <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
                       {(order.menus || []).map((m, i) => (
                         <li key={m.menuId || i}>
-                          <b>{m.name}</b> <span className="tag is-info is-light ml-2">x{m.quantity}</span> <span className="has-text-grey-light">({m.price.toFixed(2)} €)</span>
+                          <b>{t(m.name)}</b> <span className="tag is-info is-light ml-2">x{m.quantity}</span> <span className="has-text-grey-light">({m.price.toFixed(2)} €)</span>
                         </li>
                       ))}
                     </ul>
                   </td>
                   <td><b>{total.toFixed(2)} €</b></td>
                   <td>{order.date ? new Date(order.date).toLocaleString() : ''}</td>
-                  <td>{order.status}</td>
+                  <td>{t(order.status)}</td>
                 </tr>
               );
             })}
           </tbody>
         </table>
         {filterOrders(orders).length === 0 && (
-          <div className="has-text-grey-light" style={{ textAlign: 'center', marginTop: 30 }}>Aucun achat trouvé.</div>
+          <div className="has-text-grey-light" style={{ textAlign: 'center', marginTop: 30 }}>{t('Aucun achat trouvé.')}</div>
         )}
       </div>
     </section>

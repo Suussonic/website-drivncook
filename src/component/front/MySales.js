@@ -4,10 +4,12 @@
 
 import React, { useEffect, useState } from 'react';
 import Table from '../common/Table';
+import { useTranslation } from 'react-i18next';
 
 const columns = ['id', 'amount', 'date'];
 
 const MySales = ({ user }) => {
+  const { t } = useTranslation();
   const [sales, setSales] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -28,12 +30,12 @@ const MySales = ({ user }) => {
     fetchSales();
   }, [user]);
 
-  if (loading) return <div>Chargement des ventes...</div>;
+  if (loading) return <div>{t('Chargement des ventes...')}</div>;
   if (error) return <div className="has-text-danger">{error}</div>;
 
   return (
     <section className="section">
-      <h2 className="title">Mes ventes</h2>
+      <h2 className="title">{t('Mes ventes')}</h2>
       <Table columns={columns} data={sales} />
     </section>
   );

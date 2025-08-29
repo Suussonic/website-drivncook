@@ -1,3 +1,4 @@
+import OrderSuccess from './component/front/OrderSuccess';
 import React, { useState } from 'react';
 
 import { Navigate } from 'react-router-dom';
@@ -124,6 +125,7 @@ function App() {
             <Route path="/franchisee" element={user?.role === 'admin' ? <FranchiseeDashboard /> : <Navigate to="/404" />} />
             <Route path="/404" element={<NotFound />} />
             <Route path="*" element={<NotFound />} />
+             <Route path="/order-success" element={<OrderSuccess />} />
           </Routes>
         </MainLayout>
       </>
