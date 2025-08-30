@@ -97,18 +97,18 @@ const Warehouses = () => {
     return null;
   });
 
-  return (
-    <>
-      <h2 className="title has-text-white">Gestion des entrepôts</h2>
-      {alerts}
-      <DataList
-        columns={columns}
-        data={warehouses}
-        EditForm={props => <EditWarehouseForm {...props} onSave={handleSave} />}
-        onDelete={handleDelete}
-      />
-    </>
-  );
+    return (
+      <div style={{ maxWidth: 1100, margin: '32px auto', padding: '24px 24px 32px 24px', borderRadius: 18, background: 'rgba(0,0,0,0.01)' }}>
+        <h2 className="title has-text-white">Gestion des entrepôts</h2>
+        {alerts}
+        <DataList
+          columns={columns}
+          data={warehouses}
+          EditForm={props => <EditWarehouseForm {...props} onSave={handleSave} />}
+          onDelete={handleDelete}
+        />
+      </div>
+    );
 };
 
 export default Warehouses;

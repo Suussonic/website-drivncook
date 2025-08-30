@@ -64,11 +64,22 @@ function ReviewsAdmin() {
   const getUser = id => users.find(u => u._id === (id?._id || id)) || {};
 
   // Adapter les données pour DataList
+  console.log('Avis reçus:', reviews);
+  console.log('Utilisateurs reçus:', users);
   const data = reviews.map(r => {
     const u = getUser(r.userId);
+    console.log('Review:', r, 'User trouvé:', u);
+    let displayName = '';
+    if (u) {
+      if (u.prenom && u.nom) displayName = u.prenom + ' ' + u.nom;
+      else if (u.prenom) displayName = u.prenom;
+      else if (u.nom) displayName = u.nom;
+      else if (u.email) displayName = u.email;
+    }
+    if (!displayName) displayName = t('Utilisateur inconnu');
     return {
       ...r,
-      user: (u.prenom || '') + ' ' + (u.nom || ''),
+      user: displayName,
       rating: '★'.repeat(r.rating) + '☆'.repeat(5 - r.rating),
       createdAt: new Date(r.createdAt).toLocaleString(),
     };
@@ -106,12 +117,7 @@ function ReviewsAdmin() {
       <div style={{ maxWidth: 1100, margin: '32px auto', padding: '24px 24px 32px 24px', borderRadius: 18, background: 'rgba(0,0,0,0.01)' }}>
         <h2 className="title has-text-white">{t('Gestion des avis')}</h2>
         <DataList
-          columns={columns.map(col =>
-            col === 'user' ? t('Utilisateur') :
-            col === 'rating' ? t('Note') :
-            col === 'message' ? t('Message') :
-            col === 'createdAt' ? t('Date') : col
-          )}
+          columns={columns}
           data={data}
           EditForm={props => <EditReviewForm {...props} onSave={handleSave} />}
           onDelete={handleDelete}
