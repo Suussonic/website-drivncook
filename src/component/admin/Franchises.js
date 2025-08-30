@@ -131,7 +131,7 @@ const Franchises = () => {
   if (error) return <div className="has-text-danger">{error}</div>;
 
   return (
-    <>
+    <div style={{ maxWidth: 1100, margin: '32px auto', padding: '24px 24px 32px 24px', borderRadius: 18, background: 'rgba(0,0,0,0.01)' }}>
       <h2 className="title has-text-white">Gestion des franchisés</h2>
       <AddFranchiseForm onAdd={handleAdd} />
       <DataList
@@ -140,7 +140,7 @@ const Franchises = () => {
         EditForm={props => <EditFranchiseForm {...props} onSave={handleSave} />}
         onDelete={handleDelete}
       />
-    </>
+    </div>
   );
 };
 

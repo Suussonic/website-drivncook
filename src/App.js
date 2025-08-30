@@ -25,6 +25,7 @@ import Menus from './component/front/Menus';
 // import Reservation from './component/front/Reservation';
 import Fidelite from './component/front/Fidelite';
 import MenuAdmin from './component/admin/MenuAdmin';
+import ReviewsAdmin from './component/admin/ReviewsAdmin';
 import Contact from './component/front/Contact';
 import Newsletter from './component/front/Newsletter';
 import TrucksLocations from './component/front/TrucksLocations';
@@ -77,11 +78,12 @@ function App() {
 
   const location = window.location.pathname;
   const isBackOfficeRoute = location.startsWith('/backoffice') || location.startsWith('/franchises') || location.startsWith('/trucks-admin') || location.startsWith('/warehouses-admin') || (location.startsWith('/orders') && location !== '/my-orders') || location.startsWith('/menu-admin') || location.startsWith('/franchisee');
+  const isAdminUser = user?.role === 'admin';
 
   return (
     <Router>
       <>
-        {isBackOfficeRoute ? (
+        {isBackOfficeRoute && isAdminUser ? (
           <NavbarBack user={user} onLogout={handleLogout} />
         ) : (
           <Navbar isLogged={!!user} user={user} onLogout={handleLogout} />
@@ -111,6 +113,7 @@ function App() {
             <Route path="/franchise-dashboard" element={user ? <FranchiseDashboard user={user} sales={[]} trucks={[]} orders={[]} /> : <Login onLogin={handleLogin} />} />
             <Route path="/warehouses" element={user ? <WarehousesFront /> : <Login onLogin={handleLogin} />} />
             <Route path="/menu-admin" element={user?.role === 'admin' ? <MenuAdmin /> : <Navigate to="/404" />} />
+            <Route path="/reviews-admin" element={user?.role === 'admin' ? <ReviewsAdmin /> : <Navigate to="/404" />} />
             <Route path="/backoffice" element={user?.role === 'admin' ? <BackOfficeHome user={user} /> : <Navigate to="/404" />} />
             <Route path="/franchises" element={user?.role === 'admin' ? <Franchises /> : <Navigate to="/404" />} />
             <Route path="/trucks" element={user?.role === 'admin' ? <Trucks /> : <Navigate to="/404" />} />

@@ -14,7 +14,8 @@ const NavbarBack = ({ user, onLogout }) => (
         <Link className="navbar-item" to="/trucks-admin">Camions / Emplacements</Link>
         <Link className="navbar-item" to="/warehouses-admin">Entrepôts</Link>
         <Link className="navbar-item" to="/orders">Achats</Link>
-        <Link className="navbar-item" to="/menu-admin">Menus</Link>
+  <Link className="navbar-item" to="/menu-admin">Menus</Link>
+  <Link className="navbar-item" to="/reviews-admin">Avis</Link>
         <Link className="navbar-item" to="/franchisee">Espace Franchisé</Link>
       </div>
       <div className="navbar-end">
