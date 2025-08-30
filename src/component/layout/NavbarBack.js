@@ -1,11 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import logoDrivncook from '../../assets/logo-drivncook.png';
 
 const NavbarBack = ({ user, onLogout }) => (
   <nav className="navbar is-primary" role="navigation" aria-label="main navigation">
     <div className="navbar-brand">
-      <Link className="navbar-item" to="/backoffice">
-        Driv'n Cook
+      <Link className="navbar-item" to="/">
+        <img src={logoDrivncook} alt="Driv'n Cook Logo" style={{ height: '28px', marginRight: '8px' }} />
+        <span style={{ fontWeight: 'bold', fontSize: '1.1em' }}>Driv'n Cook</span>
       </Link>
     </div>
     <div className="navbar-menu">

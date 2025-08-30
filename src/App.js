@@ -2,7 +2,7 @@ import OrderSuccess from './component/front/OrderSuccess';
 import React, { useState } from 'react';
 
 import { Navigate } from 'react-router-dom';
-import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import MainLayout from './component/layout/MainLayout';
 import Navbar from './component/layout/Navbar';
 import NavbarBack from './component/layout/NavbarBack';
@@ -46,11 +46,11 @@ import Interconnexion from './component/front/Interconnexion';
 import './App.css';
 import './i18n';
 
+
 function App() {
   const [notifications, setNotifications] = useState([
     { type: 'is-info', message: "Bienvenue sur la plateforme Driv'n Cook !" }
   ]);
-  // Synchronise user state avec localStorage
   const [user, setUser] = useState(() => {
     try {
       return JSON.parse(localStorage.getItem('user'));
@@ -76,64 +76,83 @@ function App() {
     setUser(updated);
   };
 
-  const location = window.location.pathname;
-  const isBackOfficeRoute = location.startsWith('/backoffice') || location.startsWith('/franchises') || location.startsWith('/trucks-admin') || location.startsWith('/warehouses-admin') || (location.startsWith('/orders') && location !== '/my-orders') || location.startsWith('/menu-admin') || location.startsWith('/franchisee');
-  const isAdminUser = user?.role === 'admin';
-
   return (
     <Router>
-      <>
-        {isBackOfficeRoute && isAdminUser ? (
-          <NavbarBack user={user} onLogout={handleLogout} />
-        ) : (
-          <Navbar isLogged={!!user} user={user} onLogout={handleLogout} />
-        )}
-        <MainLayout isAdmin={isBackOfficeRoute} user={user} onLogout={handleLogout}>
-          <Routes>
-            <Route path="/" element={<PublicHome />} />
-            <Route path="/home" element={<PublicHome />} />
-            <Route path="/menus" element={<Menus />} />
-            {/* <Route path="/reservation" element={<Reservation />} /> */}
-            <Route path="/fidelite" element={<Fidelite user={user} />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/newsletter" element={<Newsletter />} />
-            <Route path="/emplacements" element={<TrucksLocations />} />
-            <Route path="/trucks/:id" element={<TruckDetails />} />
-            {/* <Route path="/reservation/:truckId" element={<Reservation />} /> */}
-            <Route path="/avis" element={<Reviews />} />
-            <Route path="/clients" element={<Clients />} />
-            <Route path="/interconnexion" element={<Interconnexion />} />
-            <Route path="/login" element={<Login onLogin={handleLogin} />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/my-orders" element={user ? <MyOrders user={user} /> : <Login onLogin={handleLogin} />} />
-            <Route path="/my-sales" element={user ? <MySales user={user} /> : <Login onLogin={handleLogin} />} />
-            <Route path="/my-trucks" element={user ? <MyTrucks user={user} /> : <Login onLogin={handleLogin} />} />
-            <Route path="/my-profile" element={user ? <MyProfile user={user} onUpdate={handleUpdateProfile} /> : <Login onLogin={handleLogin} />} />
-            <Route path="/versements" element={user ? <Versements user={user} sales={[]} /> : <Login onLogin={handleLogin} />} />
-            <Route path="/franchise-dashboard" element={user ? <FranchiseDashboard user={user} sales={[]} trucks={[]} orders={[]} /> : <Login onLogin={handleLogin} />} />
-            <Route path="/warehouses" element={user ? <WarehousesFront /> : <Login onLogin={handleLogin} />} />
-            <Route path="/menu-admin" element={user?.role === 'admin' ? <MenuAdmin /> : <Navigate to="/404" />} />
-            <Route path="/reviews-admin" element={user?.role === 'admin' ? <ReviewsAdmin /> : <Navigate to="/404" />} />
-            <Route path="/backoffice" element={user?.role === 'admin' ? <BackOfficeHome user={user} /> : <Navigate to="/404" />} />
-            <Route path="/franchises" element={user?.role === 'admin' ? <Franchises /> : <Navigate to="/404" />} />
-            <Route path="/trucks" element={user?.role === 'admin' ? <Trucks /> : <Navigate to="/404" />} />
-            <Route path="/trucks-admin" element={user?.role === 'admin' ? <TrucksAdmin /> : <Navigate to="/404" />} />
-            <Route path="/warehouses-admin" element={user?.role === 'admin' ? <Warehouses /> : <Navigate to="/404" />} />
-            <Route path="/orders" element={user?.role === 'admin' ? <Orders /> : <Navigate to="/404" />} />
-            <Route path="/sales" element={user?.role === 'admin' ? <Sales /> : <Navigate to="/404" />} />
-            <Route path="/reports" element={user?.role === 'admin' ? <Reports /> : <Navigate to="/404" />} />
-            <Route path="/alerts" element={user?.role === 'admin' ? <Alerts /> : <Navigate to="/404" />} />
-            <Route path="/profile" element={user ? <Profile user={user} onUpdate={handleUpdateProfile} /> : <Login onLogin={handleLogin} />} />
-            <Route path="/users-admin" element={user?.role === 'admin' ? <UsersAdmin /> : <Navigate to="/404" />} />
-            <Route path="/franchisee" element={user?.role === 'admin' ? <FranchiseeDashboard /> : <Navigate to="/404" />} />
-            <Route path="/404" element={<NotFound />} />
-            <Route path="*" element={<NotFound />} />
-             <Route path="/order-success" element={<OrderSuccess />} />
-          </Routes>
-        </MainLayout>
-      </>
+      <AppContent
+        user={user}
+        handleLogout={handleLogout}
+        handleLogin={handleLogin}
+        handleUpdateProfile={handleUpdateProfile}
+      />
     </Router>
   );
 }
 
+function AppContent({ user, handleLogout, handleLogin, handleUpdateProfile }) {
+  const location = useLocation();
+  const path = location.pathname;
+  const isBackOfficeRoute = path.startsWith('/backoffice') || path.startsWith('/franchises') || path.startsWith('/trucks-admin') || path.startsWith('/warehouses-admin') || (path.startsWith('/orders') && path !== '/my-orders') || path.startsWith('/menu-admin') || path.startsWith('/franchisee');
+  const isAdminUser = user?.role === 'admin';
+
+  return (
+    <Routes>
+      <Route
+        path="*"
+        element={
+          <>
+            {isBackOfficeRoute && isAdminUser ? (
+              <NavbarBack user={user} onLogout={handleLogout} />
+            ) : (
+              <Navbar isLogged={!!user} user={user} onLogout={handleLogout} />
+            )}
+            <MainLayout isAdmin={isBackOfficeRoute} user={user} onLogout={handleLogout}>
+              <Routes>
+                {/* ...existing code... */}
+                <Route path="/" element={<PublicHome />} />
+                <Route path="/home" element={<PublicHome />} />
+                <Route path="/menus" element={<Menus />} />
+                {/* <Route path="/reservation" element={<Reservation />} /> */}
+                <Route path="/fidelite" element={<Fidelite user={user} />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/newsletter" element={<Newsletter />} />
+                <Route path="/emplacements" element={<TrucksLocations />} />
+                <Route path="/trucks/:id" element={<TruckDetails />} />
+                {/* <Route path="/reservation/:truckId" element={<Reservation />} /> */}
+                <Route path="/avis" element={<Reviews />} />
+                <Route path="/clients" element={<Clients />} />
+                <Route path="/interconnexion" element={<Interconnexion />} />
+                <Route path="/login" element={<Login onLogin={handleLogin} />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/my-orders" element={user ? <MyOrders user={user} /> : <Login onLogin={handleLogin} />} />
+                <Route path="/my-sales" element={user ? <MySales user={user} /> : <Login onLogin={handleLogin} />} />
+                <Route path="/my-trucks" element={user ? <MyTrucks user={user} /> : <Login onLogin={handleLogin} />} />
+                <Route path="/my-profile" element={user ? <MyProfile user={user} onUpdate={handleUpdateProfile} /> : <Login onLogin={handleLogin} />} />
+                <Route path="/versements" element={user ? <Versements user={user} sales={[]} /> : <Login onLogin={handleLogin} />} />
+                <Route path="/franchise-dashboard" element={user ? <FranchiseDashboard user={user} sales={[]} trucks={[]} orders={[]} /> : <Login onLogin={handleLogin} />} />
+                <Route path="/warehouses" element={user ? <WarehousesFront /> : <Login onLogin={handleLogin} />} />
+                <Route path="/menu-admin" element={user?.role === 'admin' ? <MenuAdmin /> : <Navigate to="/404" />} />
+                <Route path="/reviews-admin" element={user?.role === 'admin' ? <ReviewsAdmin /> : <Navigate to="/404" />} />
+                <Route path="/backoffice" element={user?.role === 'admin' ? <BackOfficeHome user={user} /> : <Navigate to="/404" />} />
+                <Route path="/franchises" element={user?.role === 'admin' ? <Franchises /> : <Navigate to="/404" />} />
+                <Route path="/trucks" element={user?.role === 'admin' ? <Trucks /> : <Navigate to="/404" />} />
+                <Route path="/trucks-admin" element={user?.role === 'admin' ? <TrucksAdmin /> : <Navigate to="/404" />} />
+                <Route path="/warehouses-admin" element={user?.role === 'admin' ? <Warehouses /> : <Navigate to="/404" />} />
+                <Route path="/orders" element={user?.role === 'admin' ? <Orders /> : <Navigate to="/404" />} />
+                <Route path="/sales" element={user?.role === 'admin' ? <Sales /> : <Navigate to="/404" />} />
+                <Route path="/reports" element={user?.role === 'admin' ? <Reports /> : <Navigate to="/404" />} />
+                <Route path="/alerts" element={user?.role === 'admin' ? <Alerts /> : <Navigate to="/404" />} />
+                <Route path="/profile" element={user ? <Profile user={user} onUpdate={handleUpdateProfile} /> : <Login onLogin={handleLogin} />} />
+                <Route path="/users-admin" element={user?.role === 'admin' ? <UsersAdmin /> : <Navigate to="/404" />} />
+                <Route path="/franchisee" element={user?.role === 'admin' ? <FranchiseeDashboard /> : <Navigate to="/404" />} />
+                <Route path="/404" element={<NotFound />} />
+                <Route path="*" element={<NotFound />} />
+                <Route path="/order-success" element={<OrderSuccess />} />
+              </Routes>
+            </MainLayout>
+          </>
+        }
+      />
+    </Routes>
+  );
+}
 export default App;
