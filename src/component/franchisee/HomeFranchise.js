@@ -1,9 +1,7 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-
-const FranchiseeDashboard = () => (
+const HomeFranchise = () => (
   <section className="section">
     <div className="box" style={{ maxWidth: 900, margin: '2rem auto' }}>
       <h2 className="title">Bienvenue dans votre espace franchisé</h2>
@@ -12,4 +10,4 @@ const FranchiseeDashboard = () => (
   </section>
 );
 
-export default FranchiseeDashboard;
+export default HomeFranchise;

@@ -106,3 +106,4 @@ const MyOrders = ({ user }) => {
 };
 
 export default MyOrders;
+// Fichier supprimé

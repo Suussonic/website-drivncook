@@ -36,14 +36,16 @@ const Navbar = ({ isLogged, user, onLogout, forceBackOffice }) => {
       </div>
       <div className="navbar-menu">
         <div className="navbar-start">
-          <Link className="navbar-item" to="/">{i18n.t('Accueil')}</Link>
           <Link className="navbar-item" to="/emplacements">{i18n.t('Emplacements')}</Link>
           <Link className="navbar-item" to="/menus">{i18n.t('Menus')}</Link>
           {/* <Link className="navbar-item" to="/reservation">{i18n.t('Réserver')}</Link> */}
           <Link className="navbar-item" to="/fidelite">{i18n.t('Fidélité')}</Link>
           <Link className="navbar-item" to="/contact">{i18n.t('Contact')}</Link>
-          {user && (
+          {/* {user && (
             <Link className="navbar-item" to="/my-orders">{i18n.t('Mes achats')}</Link>
+          )} */}
+          {(user?.role === 'franchisee' || user?.role === 'franchise') && (
+            <Link className="navbar-item" to="/my-orders">Mes achats</Link>
           )}
         </div>
         <div className="navbar-end">
@@ -100,6 +102,14 @@ const Navbar = ({ isLogged, user, onLogout, forceBackOffice }) => {
                 <span className="icon"><i className="fas fa-tools"></i></span>
                 <span>Back-Office</span>
               </Link>
+            )}
+            {(user?.role === 'franchisee' || user?.role === 'franchise') && (
+              <>
+                <Link className="button is-light ml-2" to="/franchise-dashboard">
+                  <span className="icon"><i className="fas fa-store"></i></span>
+                  <span>Mon espace franchisé</span>
+                </Link>
+              </>
             )}
           </div>
         </div>

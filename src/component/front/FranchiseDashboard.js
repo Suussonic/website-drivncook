@@ -10,27 +10,8 @@ const FranchiseDashboard = ({ user, sales, trucks, orders }) => {
   return (
     <section className="section">
       <div className="box" style={{ maxWidth: 900, margin: '2rem auto', background: '#23272f', borderRadius: 12 }}>
-        <h2 className="title has-text-white">{t('Tableau de bord Franchisé')}</h2>
-        <div className="columns is-multiline">
-          <div className="column is-4">
-            <div className="box has-background-primary has-text-white">
-              <p className="title is-4">{nbTrucks}</p>
-              <p>{t('Camions attribués')}</p>
-            </div>
-          </div>
-          <div className="column is-4">
-            <div className="box has-background-link has-text-white">
-              <p className="title is-4">{nbOrders}</p>
-              <p>{t('Commandes')}</p>
-            </div>
-          </div>
-          <div className="column is-4">
-            <div className="box has-background-success has-text-white">
-              <p className="title is-4">{chiffreAffaires.toLocaleString()} €</p>
-              <p>{t("Chiffre d'affaires")}</p>
-            </div>
-          </div>
-        </div>
+        <h2 className="title has-text-white">Bienvenue dans votre espace franchisé</h2>
+        <p className="has-text-white">Vous êtes connecté à votre espace personnel. Utilisez le menu pour accéder aux différentes fonctionnalités.</p>
       </div>
     </section>
   );

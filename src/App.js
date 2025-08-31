@@ -1,11 +1,12 @@
-import OrderSuccess from './component/front/OrderSuccess';
-import React, { useState } from 'react';
-
-import { Navigate } from 'react-router-dom';
-import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Navigate, BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import BreakdownForm from './component/franchisee/BreakdownForm';
+import BreakdownHistory from './component/franchisee/BreakdownHistory';
 import MainLayout from './component/layout/MainLayout';
 import Navbar from './component/layout/Navbar';
 import NavbarBack from './component/layout/NavbarBack';
+import NavbarFranchise from './component/layout/NavbarFranchise';
+import NavbarFranchisee from './component/layout/NavbarFranchisee';
 import Dashboard from './component/admin/Dashboard';
 import Franchises from './component/admin/Franchises';
 import Trucks from './component/admin/Trucks';
@@ -18,11 +19,12 @@ import UsersAdmin from './component/admin/UsersAdmin';
 import Alerts from './component/admin/Alerts';
 import UserProfile from './component/admin/UserProfile';
 import FranchiseeDashboard from './component/franchisee/FranchiseeDashboard';
+import HomeFranchise from './component/franchisee/HomeFranchise';
+// Suppression approvisionnement
 import NotFound from './component/front/NotFound';
 import BackOfficeHome from './component/admin/BackOfficeHome';
 import PublicHome from './component/front/PublicHome';
 import Menus from './component/front/Menus';
-// import Reservation from './component/front/Reservation';
 import Fidelite from './component/front/Fidelite';
 import MenuAdmin from './component/admin/MenuAdmin';
 import ReviewsAdmin from './component/admin/ReviewsAdmin';
@@ -38,13 +40,33 @@ import MySales from './component/front/MySales';
 import MyTrucks from './component/front/MyTrucks';
 import MyProfile from './component/front/MyProfile';
 import Profile from './component/front/Profile';
-import WarehousesFront from './component/front/Warehouses';
+import MyWarehouses from './component/franchisee/MyWarehouses';
 import Versements from './component/front/Versements';
 import Clients from './component/front/Clients';
 import FranchiseDashboard from './component/front/FranchiseDashboard';
 import Interconnexion from './component/front/Interconnexion';
+import OrderSuccess from './component/front/OrderSuccess';
 import './App.css';
 import './i18n';
+
+
+function BreakdownPage({ user }) {
+  const [trucks, setTrucks] = useState([]);
+  const [refreshKey, setRefreshKey] = useState(0);
+  const refresh = () => setRefreshKey(k => k + 1);
+  useEffect(() => {
+    fetch(`/api/trucks?franchiseId=${user.franchiseId || ''}`)
+      .then(res => res.json())
+      .then(data => setTrucks(Array.isArray(data) ? data : []));
+  }, [user]);
+  return (
+    <div className="section">
+      <BreakdownForm user={user} trucks={trucks} onReport={refresh} />
+      <BreakdownHistory key={refreshKey} user={user} />
+    </div>
+  );
+}
+
 
 
 function App() {
@@ -58,8 +80,8 @@ function App() {
       return null;
     }
   });
-  const isAdmin = false;
 
+  const isAdmin = false;
   const handleCloseNotif = idx => {
     setNotifications(notifications.filter((_, i) => i !== idx));
   };
@@ -75,6 +97,7 @@ function App() {
     const updated = { ...user, ...form };
     setUser(updated);
   };
+
 
   return (
     <Router>
@@ -93,6 +116,13 @@ function AppContent({ user, handleLogout, handleLogin, handleUpdateProfile }) {
   const path = location.pathname;
   const isBackOfficeRoute = path.startsWith('/backoffice') || path.startsWith('/franchises') || path.startsWith('/trucks-admin') || path.startsWith('/warehouses-admin') || (path.startsWith('/orders') && path !== '/my-orders') || path.startsWith('/menu-admin') || path.startsWith('/franchisee');
   const isAdminUser = user?.role === 'admin';
+  const isFranchiseeUser = user && (user.role === 'franchisee' || user.role === 'franchise');
+
+  // Définir les routes qui doivent afficher la navbar franchisé
+  const franchiseeNavRoutes = [
+    '/franchisee', '/franchise-dashboard', '/my-orders', '/my-sales', '/my-trucks', '/warehouses', '/supply', '/breakdown', '/breakdown-history', '/supply-history'
+  ];
+  const isFranchiseeRoute = franchiseeNavRoutes.some(route => path.startsWith(route));
 
   return (
     <Routes>
@@ -102,6 +132,8 @@ function AppContent({ user, handleLogout, handleLogin, handleUpdateProfile }) {
           <>
             {isBackOfficeRoute && isAdminUser ? (
               <NavbarBack user={user} onLogout={handleLogout} />
+            ) : isFranchiseeRoute ? (
+              <NavbarFranchisee user={user} onLogout={handleLogout} />
             ) : (
               <Navbar isLogged={!!user} user={user} onLogout={handleLogout} />
             )}
@@ -129,7 +161,7 @@ function AppContent({ user, handleLogout, handleLogin, handleUpdateProfile }) {
                 <Route path="/my-profile" element={user ? <MyProfile user={user} onUpdate={handleUpdateProfile} /> : <Login onLogin={handleLogin} />} />
                 <Route path="/versements" element={user ? <Versements user={user} sales={[]} /> : <Login onLogin={handleLogin} />} />
                 <Route path="/franchise-dashboard" element={user ? <FranchiseDashboard user={user} sales={[]} trucks={[]} orders={[]} /> : <Login onLogin={handleLogin} />} />
-                <Route path="/warehouses" element={user ? <WarehousesFront /> : <Login onLogin={handleLogin} />} />
+                <Route path="/warehouses" element={user ? <MyWarehouses user={user} /> : <Login onLogin={handleLogin} />} />
                 <Route path="/menu-admin" element={user?.role === 'admin' ? <MenuAdmin /> : <Navigate to="/404" />} />
                 <Route path="/reviews-admin" element={user?.role === 'admin' ? <ReviewsAdmin /> : <Navigate to="/404" />} />
                 <Route path="/backoffice" element={user?.role === 'admin' ? <BackOfficeHome user={user} /> : <Navigate to="/404" />} />
@@ -143,7 +175,10 @@ function AppContent({ user, handleLogout, handleLogin, handleUpdateProfile }) {
                 <Route path="/alerts" element={user?.role === 'admin' ? <Alerts /> : <Navigate to="/404" />} />
                 <Route path="/profile" element={user ? <Profile user={user} onUpdate={handleUpdateProfile} /> : <Login onLogin={handleLogin} />} />
                 <Route path="/users-admin" element={user?.role === 'admin' ? <UsersAdmin /> : <Navigate to="/404" />} />
-                <Route path="/franchisee" element={user?.role === 'admin' ? <FranchiseeDashboard /> : <Navigate to="/404" />} />
+                <Route path="/franchisee" element={user && (user.role === 'franchisee' || user.role === 'franchise') ? <HomeFranchise /> : <Navigate to="/404" />} />
+                {/* Approvisionnement supprimé */}
+                <Route path="/breakdown" element={user ? <BreakdownForm user={user} /> : <Navigate to="/404" />} />
+                <Route path="/breakdown-history" element={user ? <BreakdownHistory user={user} /> : <Navigate to="/404" />} />
                 <Route path="/404" element={<NotFound />} />
                 <Route path="*" element={<NotFound />} />
                 <Route path="/order-success" element={<OrderSuccess />} />

@@ -1,9 +1,15 @@
-import React from 'react';
-import { warehouses } from '../../data/mockWarehouses';
+
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const Warehouses = () => {
   const { t } = useTranslation();
+  const [warehouses, setWarehouses] = useState([]);
+  useEffect(() => {
+  fetch('/api/warehouses')
+      .then(res => res.json())
+      .then(data => setWarehouses(Array.isArray(data) ? data : []));
+  }, []);
   return (
     <section className="section">
       <div className="box" style={{ maxWidth: 700, margin: '2rem auto', background: '#23272f', borderRadius: 12 }}>
@@ -18,10 +24,10 @@ const Warehouses = () => {
           </thead>
           <tbody>
             {warehouses.map(w => (
-              <tr key={w.id}>
-                <td>{w.id}</td>
+              <tr key={w._id}>
+                <td>{w._id}</td>
                 <td>{w.name}</td>
-                <td>{w.stock}</td>
+                <td>{w.stock ? JSON.stringify(w.stock) : '-'}</td>
               </tr>
             ))}
           </tbody>

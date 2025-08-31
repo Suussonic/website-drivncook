@@ -16,7 +16,9 @@ const TrucksLocations = () => {
   }, []);
 
   const filtered = trucks.filter(t =>
-    (!search ||
+    t.status !== 'En panne' &&
+    (
+      !search ||
       (t.city && t.city.toLowerCase().includes(search.toLowerCase())) ||
       (t.address && t.address.toLowerCase().includes(search.toLowerCase())) ||
       (t.plate && t.plate.toLowerCase().includes(search.toLowerCase()))
@@ -53,7 +55,7 @@ const TrucksLocations = () => {
                 >
                   <h3 className="subtitle has-text-white">{truck.plate} <span className="tag is-info is-light ml-2">{truck.city || '-'}</span></h3>
                   <p className="has-text-white"><b>{t('Adresse')} :</b> {truck.address || '-'}</p>
-                  <p className="has-text-white"><b>{t('Horaires')} :</b> {truck.schedule || '-'}</p>
+                    <p className="has-text-white"><b>{t('Horaires')} :</b> {(truck.startTime && truck.endTime) ? `${truck.startTime} - ${truck.endTime}` : '-'} </p>
                   <p className="has-text-white"><b>{t('Status')} :</b> {truck.status || '-'}</p>
                 </div>
               </div>
