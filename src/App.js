@@ -20,7 +20,6 @@ import Alerts from './component/admin/Alerts';
 import UserProfile from './component/admin/UserProfile';
 import FranchiseeDashboard from './component/franchisee/FranchiseeDashboard';
 import HomeFranchise from './component/franchisee/HomeFranchise';
-// Suppression approvisionnement
 import NotFound from './component/front/NotFound';
 import BackOfficeHome from './component/admin/BackOfficeHome';
 import PublicHome from './component/front/PublicHome';
@@ -114,7 +113,7 @@ function App() {
 function AppContent({ user, handleLogout, handleLogin, handleUpdateProfile }) {
   const location = useLocation();
   const path = location.pathname;
-  const isBackOfficeRoute = path.startsWith('/backoffice') || path.startsWith('/franchises') || path.startsWith('/trucks-admin') || path.startsWith('/warehouses-admin') || (path.startsWith('/orders') && path !== '/my-orders') || path.startsWith('/menu-admin') || path.startsWith('/franchisee');
+  const isBackOfficeRoute = path.startsWith('/backoffice') || path.startsWith('/franchises') || path.startsWith('/trucks-admin') || path.startsWith('/warehouses-admin') || (path.startsWith('/orders') && path !== '/my-orders') || path.startsWith('/menu-admin') || path.startsWith('/franchisee') || path.startsWith('/reviews-admin') || path.startsWith('/users-admin');
   const isAdminUser = user?.role === 'admin';
   const isFranchiseeUser = user && (user.role === 'franchisee' || user.role === 'franchise');
 

@@ -52,7 +52,7 @@ const Orders = () => {
   return (
     <section className="section">
       <div className="box" style={{ maxWidth: 1200, margin: '2rem auto', background: '#23272f', borderRadius: 18 }}>
-        <h2 className="title has-text-white">Achats / Réservations</h2>
+        <h2 className="title has-text-white">Achats</h2>
         <div style={{ marginBottom: 20, display: 'flex', justifyContent: 'flex-end' }}>
           <input
             className="input"

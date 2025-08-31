@@ -32,21 +32,7 @@ const DataList = ({ columns, data, EditForm, onDelete, title }) => {
   return (
     <div className="box" style={{ borderRadius: 18, background: '#23272f' }}>
       {title && <h2 className="title has-text-white">{title}</h2>}
-      <div className="field mb-4">
-        <div className="control has-icons-left">
-          <input
-            className="input"
-            type="text"
-            placeholder="Rechercher..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            style={{ borderRadius: 12, background: '#181a20', color: '#fff', border: 'none' }}
-          />
-          <span className="icon is-left">
-            <i className="fas fa-search"></i>
-          </span>
-        </div>
-      </div>
+  {/* Champ de recherche supprimé pour TrucksAdmin */}
       <div style={{ overflowX: 'auto' }}>
         <table className="table is-fullwidth is-hoverable" style={{ background: '#23272f', color: '#fff', borderRadius: 12 }}>
           <thead>

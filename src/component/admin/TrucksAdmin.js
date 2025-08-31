@@ -1,5 +1,3 @@
-
-
 import React, { useState, useEffect } from 'react';
 import DataList from '../common/DataList';
 
@@ -19,7 +17,8 @@ const EditTruckForm = ({ item, onClose, onSave }) => {
         <div className="control"><input className="input" name="plate" placeholder="Plaque" value={form.plate} onChange={handleChange} required /></div>
         <div className="control"><input className="input" name="city" placeholder="Ville" value={form.city} onChange={handleChange} required /></div>
         <div className="control"><input className="input" name="address" placeholder="Adresse" value={form.address} onChange={handleChange} required /></div>
-        <div className="control"><input className="input" name="schedule" placeholder="Horaires" value={form.schedule} onChange={handleChange} required /></div>
+  <div className="control"><input className="input" name="startTime" placeholder="Heure début" value={form.startTime !== undefined ? form.startTime : (item.startTime || '')} onChange={handleChange} required /></div>
+  <div className="control"><input className="input" name="endTime" placeholder="Heure fin" value={form.endTime !== undefined ? form.endTime : (item.endTime || '')} onChange={handleChange} required /></div>
         <div className="control">
           <select className="input" name="status" value={form.status} onChange={handleChange}>
             <option value="active">Actif</option>
@@ -72,7 +71,7 @@ const AddTruckForm = ({ onAdd }) => {
   );
 };
 
-const columns = ['plate', 'city', 'address', 'schedule', 'status'];
+const columns = ['plate', 'city', 'address', 'startTime', 'endTime', 'status'];
 
 const TrucksAdmin = () => {
   const [trucks, setTrucks] = useState([]);

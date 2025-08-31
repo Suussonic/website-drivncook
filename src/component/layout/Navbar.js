@@ -98,10 +98,12 @@ const Navbar = ({ isLogged, user, onLogout, forceBackOffice }) => {
               <Link className="button is-info" to="/login">Connexion</Link>
             )}
             {user?.role === 'admin' && (
-              <Link className="button is-light ml-2" to="/backoffice">
-                <span className="icon"><i className="fas fa-tools"></i></span>
-                <span>Back-Office</span>
-              </Link>
+              <>
+                <Link className="button is-light ml-2" to="/backoffice">
+                  <span className="icon"><i className="fas fa-tools"></i></span>
+                  <span>Back-Office</span>
+                </Link>
+              </>
             )}
             {(user?.role === 'franchisee' || user?.role === 'franchise') && (
               <>

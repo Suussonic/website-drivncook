@@ -76,8 +76,8 @@ const UsersAdmin = () => {
 
   return (
     <section className="section">
-      <div className="box" style={{ maxWidth: 900, margin: '2rem auto' }}>
-        <h2 className="title">Gestion des Utilisateurs</h2>
+      <div className="box" style={{ maxWidth: 900, margin: '2rem auto', background: '#23272f', borderRadius: 18 }}>
+        <h2 className="title has-text-white">Gestion des Utilisateurs</h2>
         <form onSubmit={handleSubmit} className="mb-4">
           <div className="field is-grouped is-flex-wrap-wrap">
             <div className="control"><input className="input" name="email" placeholder="Email" value={form.email} onChange={handleChange} required /></div>
@@ -98,7 +98,7 @@ const UsersAdmin = () => {
           </div>
         </form>
         {error && <div className="has-text-danger mb-2">{error}</div>}
-        <table className="table is-fullwidth">
+  <table className="table is-fullwidth" style={{ background: '#23272f', color: '#fff', borderRadius: 12 }}>
           <thead>
             <tr>
               <th>Email</th>

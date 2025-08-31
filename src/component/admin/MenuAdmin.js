@@ -59,8 +59,8 @@ function MenuAdmin() {
 
   return (
     <section className="section">
-      <div className="box" style={{ maxWidth: 600, margin: '2rem auto' }}>
-        <h2 className="title">Gestion des Menus</h2>
+      <div className="box" style={{ maxWidth: 600, margin: '2rem auto', background: '#23272f', borderRadius: 18 }}>
+        <h2 className="title has-text-white">Gestion des Menus</h2>
         <form onSubmit={handleAdd} className="mb-4">
           <div className="field is-grouped">
             <div className="control is-expanded">
@@ -77,7 +77,7 @@ function MenuAdmin() {
             </div>
           </div>
         </form>
-        <table className="table is-fullwidth">
+  <table className="table is-fullwidth" style={{ background: '#23272f', color: '#fff', borderRadius: 12 }}>
           <thead>
             <tr>
               <th>Nom</th>
